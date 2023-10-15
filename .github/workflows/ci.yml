@@ -1,0 +1,40 @@
+name: Argos
+
+on:
+  push:
+    # Argos has to run on your reference branch to creates reference builds
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  argos:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: current
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Build website
+        run: npm run build
+
+      - name: Tests / Screenshots
+        run: npm test
+
+      - name: Upload screenshots to argos-ci.com
+        continue-on-error: true
+        env:
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+        # 👇 change "./screenshots" by your screenshots folder path
+        run: npm exec argos upload ./screenshots
