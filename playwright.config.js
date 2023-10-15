@@ -1,10 +1,12 @@
 import { devices } from "@playwright/test";
 
+const port = 3000;
+
 const config = {
   webServer: {
-    command: 'npm run dev -- test',
-    url: 'http://127.0.0.1:3000/',
+    command: `npx vite --port ${port}`,
     timeout: 10 * 1000,
+    port,
     reuseExistingServer: !process.env.CI,
   },
   projects: [
